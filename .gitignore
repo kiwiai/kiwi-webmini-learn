@@ -1,0 +1,11 @@
+# usual stuff
+.tmp
+bower_components
+node_modules
+.DS_Store
+backup
+
+# all of the guide except the actual index page
+public
+!public/*.html
+!public/data/*
