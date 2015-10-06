@@ -1,4 +1,4 @@
-GaussianFilter = (arr, z)->
+GaussianFilter = (arr, order, z)->
   filteredSignal = []
   
   ZerothGaussian = ->
@@ -13,10 +13,10 @@ GaussianFilter = (arr, z)->
     # Center of the Gaussian Curve is 1
     ret[tvar] = 1
     sum = 1
-    n = 1 / ( Math.sqrt(2*Math.PI) * z)
+
     for tau in [1...tvar]
-      ret[tvar+tau] = n * Math.exp(-(tau*tau)/ (2 * z * z)) 
-      ret[tvar-tau] = n * Math.exp(-(tau*tau)/ (2 * z * z))
+      ret[tvar+tau] = Math.exp(-(tau*tau)/ (2 * z * z)) 
+      ret[tvar-tau] = Math.exp(-(tau*tau)/ (2 * z * z))
       sum += ret[tvar+tau]*2
     
     for i in [0...k]
@@ -27,9 +27,9 @@ GaussianFilter = (arr, z)->
     tvar = Math.floor(arr.length/2)
     arr[tvar] = 0;
     for tau in [1...tvar]
-      dd = -1 * arr[tvar + tau] / (z * z)
+      dd = -tau * arr[tvar + tau] / (z * z)
       arr[tvar + tau] = -1 * dd;
-      arr[tvar + tau] = dd;
+      arr[tvar - tau] = dd;
     return arr
 
   calculateConvolution = (set, N)->
@@ -58,9 +58,14 @@ GaussianFilter = (arr, z)->
       filteredSignal[i] = calculateConvolution(subset, subN)
     return
 
-  N0 = ZerothGaussian()
-  N1 = FirstGaussian(N0)
-  runFilter(N1)
+  if order == 1
+    N0 = ZerothGaussian()
+    N1 = FirstGaussian(N0)
+    runFilter(N1)
+  else
+    N0 = ZerothGaussian()
+    runFilter(N0)
+
   return filteredSignal
 
 window.GaussianFilter = GaussianFilter

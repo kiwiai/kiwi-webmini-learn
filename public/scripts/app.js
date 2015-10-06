@@ -38,7 +38,9 @@
       if (targetID === 'naive') {
         set = NaiveAverage(arr.data, 50);
       } else if (targetID === 'gaussian') {
-        set = GaussianFilter(arr.data, 100);
+        set = GaussianFilter(arr.data, 0, 25);
+      } else if (targetID === 'derivative') {
+        set = GaussianFilter(arr.data, 1, 25);
       } else {
         set = arr.data;
       }
@@ -72,5 +74,7 @@
   graphAjaxData(noisyData, 'naive');
 
   graphAjaxData(noisyData, 'gaussian');
+
+  graphAjaxData(noisyData, 'derivative');
 
 }).call(this);

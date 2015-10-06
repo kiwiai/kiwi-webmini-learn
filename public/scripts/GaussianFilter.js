@@ -1,11 +1,11 @@
 (function() {
   var GaussianFilter;
 
-  GaussianFilter = function(arr, z) {
+  GaussianFilter = function(arr, order, z) {
     var FirstGaussian, N0, N1, ZerothGaussian, calculateConvolution, filteredSignal, runFilter;
     filteredSignal = [];
     ZerothGaussian = function() {
-      var i, j, k, l, m, n, ref, ref1, ref2, ret, sum, tau, tvar;
+      var i, j, k, l, m, ref, ref1, ref2, ret, sum, tau, tvar;
       ret = [];
       tvar = Math.floor(8 * z + 0.5);
       k = 2 * tvar + 1;
@@ -14,10 +14,9 @@
       }
       ret[tvar] = 1;
       sum = 1;
-      n = 1 / (Math.sqrt(2 * Math.PI) * z);
       for (tau = l = 1, ref1 = tvar; 1 <= ref1 ? l < ref1 : l > ref1; tau = 1 <= ref1 ? ++l : --l) {
-        ret[tvar + tau] = n * Math.exp(-(tau * tau) / (2 * z * z));
-        ret[tvar - tau] = n * Math.exp(-(tau * tau) / (2 * z * z));
+        ret[tvar + tau] = Math.exp(-(tau * tau) / (2 * z * z));
+        ret[tvar - tau] = Math.exp(-(tau * tau) / (2 * z * z));
         sum += ret[tvar + tau] * 2;
       }
       for (i = m = 0, ref2 = k; 0 <= ref2 ? m < ref2 : m > ref2; i = 0 <= ref2 ? ++m : --m) {
@@ -30,9 +29,9 @@
       tvar = Math.floor(arr.length / 2);
       arr[tvar] = 0;
       for (tau = j = 1, ref = tvar; 1 <= ref ? j < ref : j > ref; tau = 1 <= ref ? ++j : --j) {
-        dd = -1 * arr[tvar + tau] / (z * z);
+        dd = -tau * arr[tvar + tau] / (z * z);
         arr[tvar + tau] = -1 * dd;
-        arr[tvar + tau] = dd;
+        arr[tvar - tau] = dd;
       }
       return arr;
     };
@@ -65,9 +64,14 @@
         filteredSignal[i] = calculateConvolution(subset, subN);
       }
     };
-    N0 = ZerothGaussian();
-    N1 = FirstGaussian(N0);
-    runFilter(N1);
+    if (order === 1) {
+      N0 = ZerothGaussian();
+      N1 = FirstGaussian(N0);
+      runFilter(N1);
+    } else {
+      N0 = ZerothGaussian();
+      runFilter(N0);
+    }
     return filteredSignal;
   };
 

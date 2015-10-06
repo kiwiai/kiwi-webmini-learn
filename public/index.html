@@ -10,11 +10,27 @@
     <script src="scripts/GaussianFilter.js"> </script>  
   </head>
   <body>
-    <h1>Welcome to Kiwi Learn</h1>
+    <div class="gutters" id="content">
+    <h1>Welcome to Signal Filtering</h1>
+    <h2>Perfect Sinusoid</h2>
+    <p>This is a mathematically generated sinusoid, all signals comes in some form of sinusoid.</p>
     <svg  id='perfect'> </svg>
+    <br>
+    <h2>Noisy Sinusoid</h2>
+    <p>In reality, sensors are cheap, the cheaper the sensor is, the noisier the signal is. Here, we 'nosified' our perfect sinusoid.</p>
     <svg  id='noisy'> </svg>
+    <br>
+    <h2>Moving Average</h2>
+    <p>There are multiple ways to clean up a signal, the simplest way is taking moving average.</p>
     <svg  id='naive'> </svg>
+    <br>
+    <h2> Gaussian Filter </h2>
+    <p>A less naive method is taking a weighted average, for example, the Gaussian Filter.</p>
     <svg  id='gaussian'></svg>
+    <h2> Gaussian First Order </h2>
+    <p>Whats interesting about the Gussian Filter is that you can take derivative on the filter itself, and the weighted average calculated will also be taken derivative. This is very useful when you are detecting for peaks, simply put on a First Order Gaussian filter and find the zeroes in the filtered signal.</p>
+    <svg  id='derivative'></svg>
+    </div>
   </body>
   <script src="scripts/app.js"></script>
 
