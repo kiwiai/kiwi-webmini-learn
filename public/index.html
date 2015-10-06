@@ -1,17 +1,20 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-  <title>Kiwi Learn</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <link rel="stylesheet" type="text/css" href="https://cdn.kiwi.ai/kiwibright.min.css"></link>
-  <link rel="icon" type="image/png" href="https://cdn.kiwi.ai/images/favi32.png">
-  <script src="https://cdn.kiwi.ai/scriptedstyles.min.js"> </script>
-  
-
+  <head>
+    <title>Kiwi Learn</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" type="text/css" href="https://cdn.kiwi.ai/kiwibright.min.css"></link>
+    <link rel="icon" type="image/png" href="https://cdn.kiwi.ai/images/favi32.png">
+    <script src="https://cdn.kiwi.ai/scriptedstyles.min.js"> </script> 
+    <script src="scripts/NaiveAverage.js"> </script>
+    <script src="scripts/GaussianFilter.js"> </script>  
   </head>
   <body>
     <h1>Welcome to Kiwi Learn</h1>
-    <svg  id='tutorial-result'> </svg>
+    <svg  id='perfect'> </svg>
+    <svg  id='noisy'> </svg>
+    <svg  id='naive'> </svg>
+    <svg  id='gaussian'></svg>
   </body>
   <script src="scripts/app.js"></script>
 

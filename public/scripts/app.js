@@ -1,8 +1,27 @@
 (function() {
-  var makeBasicChart;
+  var AjaxRequest, graphAjaxData, noisyData, perfectData, realData;
 
-  makeBasicChart = function() {
-    var plot, plotData, url, xAxis, xScale, xmlhttp, yAxis, yScale;
+  AjaxRequest = (function() {
+    function AjaxRequest(url, cb) {
+      var xmlhttp;
+      xmlhttp = new XMLHttpRequest;
+      xmlhttp.onreadystatechange = function() {
+        var data;
+        if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+          data = JSON.parse(xmlhttp.responseText);
+          cb(data);
+        }
+      };
+      xmlhttp.open('GET', url, true);
+      xmlhttp.send();
+    }
+
+    return AjaxRequest;
+
+  })();
+
+  graphAjaxData = function(dataUrl, targetID) {
+    var ajax, plot, plotData, xAxis, xScale, yAxis, yScale;
     xScale = new Plottable.Scales.Linear;
     yScale = new Plottable.Scales.Linear;
     xAxis = new Plottable.Axes.Numeric(xScale, 'bottom');
@@ -14,12 +33,17 @@
     plot.y((function(d) {
       return d.y;
     }), yScale);
-    xmlhttp = new XMLHttpRequest;
-    url = 'myTutorials.txt';
     plotData = function(arr) {
-      var chart, counter, dataset, reformattedArray;
+      var chart, counter, dataset, reformattedArray, set;
+      if (targetID === 'naive') {
+        set = NaiveAverage(arr.data, 50);
+      } else if (targetID === 'gaussian') {
+        set = GaussianFilter(arr.data, 100);
+      } else {
+        set = arr.data;
+      }
       counter = 0;
-      reformattedArray = arr.data.map(function(obj) {
+      reformattedArray = set.map(function(obj) {
         var rObj;
         rObj = {};
         rObj.x = counter;
@@ -27,23 +51,26 @@
         counter += 1;
         return rObj;
       });
-      console.log(reformattedArray);
       dataset = new Plottable.Dataset(reformattedArray);
       plot.addDataset(dataset);
       chart = new Plottable.Components.Table([[yAxis, plot], [null, xAxis]]);
-      chart.renderTo('svg#tutorial-result');
+      chart.renderTo('svg#' + targetID);
     };
-    xmlhttp.onreadystatechange = function() {
-      var data;
-      if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
-        data = JSON.parse(xmlhttp.responseText);
-        plotData(data);
-      }
-    };
-    xmlhttp.open('GET', 'data/data.json', true);
-    xmlhttp.send();
+    ajax = new AjaxRequest(dataUrl, plotData);
   };
 
-  makeBasicChart();
+  perfectData = 'data/perfectData.json';
+
+  noisyData = 'data/noisyData.json';
+
+  realData = 'data/bentOverData.json';
+
+  graphAjaxData(perfectData, 'perfect');
+
+  graphAjaxData(noisyData, 'noisy');
+
+  graphAjaxData(noisyData, 'naive');
+
+  graphAjaxData(noisyData, 'gaussian');
 
 }).call(this);

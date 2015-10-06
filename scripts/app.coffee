@@ -1,4 +1,17 @@
-makeBasicChart = ->
+class AjaxRequest
+  constructor:(url, cb) ->
+    xmlhttp = new XMLHttpRequest
+
+    xmlhttp.onreadystatechange = ->
+      if xmlhttp.readyState == 4 and xmlhttp.status == 200
+        data = JSON.parse(xmlhttp.responseText)
+        cb(data)
+      return
+
+    xmlhttp.open 'GET', url, true
+    xmlhttp.send()
+
+graphAjaxData = (dataUrl, targetID)->
   xScale = new (Plottable.Scales.Linear)
   yScale = new (Plottable.Scales.Linear)
   xAxis = new (Plottable.Axes.Numeric)(xScale, 'bottom')
@@ -12,38 +25,40 @@ makeBasicChart = ->
   plot.y ((d) ->
     d.y
   ), yScale
-  
-  xmlhttp = new XMLHttpRequest
-  url = 'myTutorials.txt'
+
 
   plotData = (arr) ->
+    if targetID == 'naive'
+      set = NaiveAverage(arr.data, 50)
+    else if targetID == 'gaussian'
+      set = GaussianFilter(arr.data, 100)
+    else
+      set = arr.data
+
     counter = 0
-    reformattedArray = arr.data.map (obj)-> 
+    reformattedArray = set.map (obj)-> 
       rObj = {}
       rObj.x = counter
       rObj.y = obj
       counter += 1
       return rObj
-    console.log reformattedArray
     dataset = new (Plottable.Dataset)(reformattedArray)
     plot.addDataset dataset
     chart = new (Plottable.Components.Table)([[yAxis,plot],[null,xAxis]])
-    chart.renderTo 'svg#tutorial-result'
+    chart.renderTo 'svg#' + targetID
     return
-
-  xmlhttp.onreadystatechange = ->
-    if xmlhttp.readyState == 4 and xmlhttp.status == 200
-      data = JSON.parse(xmlhttp.responseText)
-      plotData data
-    return
-
-  xmlhttp.open 'GET', 'data/data.json', true
-  xmlhttp.send()
-
+  
+  ajax = new AjaxRequest(dataUrl, plotData)
+  #noisyGraph = new AjaxRequest(noisyData, plotNoisy)
 
   return
 
 
-makeBasicChart()
+perfectData = 'data/perfectData.json'
+noisyData = 'data/noisyData.json'
+realData = 'data/bentOverData.json'
+graphAjaxData(perfectData,'perfect')
+graphAjaxData(noisyData,'noisy')
+graphAjaxData(noisyData,'naive')
+graphAjaxData(noisyData,'gaussian')
 
-# ---
